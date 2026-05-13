@@ -3,12 +3,12 @@
 const mongoose = require("mongoose");
 const User = require("../models/user"); // this imports the user model to this file
 
-const MONGO_URL = "";
+const MONGO_URI = "";
 
 const connectDB = async () => {
   try {
     // connect to mongoDB
-    await mongoose.connect(MONGO_URL, {
+    await mongoose.connect(MONGO_URI, {
       useNewUrlParser: true,
       useUnifiedTopology: true,
     });
