@@ -3,15 +3,13 @@
 const mongoose = require("mongoose");
 const User = require("../models/user"); // this imports the user model to this file
 
-const MONGO_URI = "";
+const MONGO_URI =
+  "mongodb+srv://ucheemekaekemezie_db_user:274H5JAAhsPQj5UL@cluster0.evpf89n.mongodb.net/?appName=Cluster0";
 
 const connectDB = async () => {
   try {
     // connect to mongoDB
-    await mongoose.connect(MONGO_URI, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    await mongoose.connect(MONGO_URI);
     console.log("mongodb connected successfully");
 
     // create the empty user collection in the database
