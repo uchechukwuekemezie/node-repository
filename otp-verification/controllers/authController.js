@@ -6,8 +6,8 @@ const crypto = require("crypto");
 const transporter = nodemailer.createTransport({
   service: "gmail",
   auth: {
-    user: "uvalentine54@mail.com",
-    pass: "Ekeme$1E",
+    user: "uvalentine54@gmail.com",
+    pass: "ggtfbwbkcowplvte",
   },
 });
 
@@ -35,18 +35,16 @@ exports.register = async (req, res) => {
       text: `Your OTP is ${otp}, expires in 10 minutes.`,
     });
 
-    res
-      .status(200)
-      .json({
-        message: "User registered successfully, Verification OTP sent to email",
-      });
+    res.status(200).json({
+      message: "User registered successfully, Verification OTP sent to email",
+    });
   } catch (error) {
     res.staus(500).json({ message: "error registering user", error });
   }
 };
 
 // to verify the otp sent to the user's email
-exports.VerifyOTP = async (req, res) => {
+exports.verifyOTP = async (req, res) => {
   try {
     const { email, otp } = req.body;
     const user = await User.findOne({ email });
@@ -101,4 +99,39 @@ exports.resendOTP = async (req, res) => {
 };
 
 // to login the user
-exports.login = async (req, res) => {};
+exports.login = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const user = await User.findOne({ email });
+
+    if (!user) return res.status(400).json({ message: "User not found" });
+    if (!user.isVerified)
+      return res
+        .status(400)
+        .json({ message: "User not verified, please verify your email" });
+
+    if (!user.isVerified) {
+      return res
+        .status(400)
+        .json({ message: "Email not verified. Please verify OTP " });
+    }
+
+    request.session.user = { id: user._id, name: user.name, email: user.email };
+    res.json({ message: "Login successful." });
+  } catch (error) {
+    res.status(500).json({ message: "Error logging in", error });
+  }
+};
+
+// logout the user
+exports.logout = (req, res) => {
+  req.session.destroy((err) => {
+    if (err) return res.status(500).json({ message: "Error logging out" });
+    res.json({ message: "logout successful" });
+  });
+};
+
+// dashboard route to load the user dashboard after successful login(protected route)
+exports.dashboard = (req, res) => {
+  res.json({ message: `Welcome to your dashboard, ${req.session.user.name}` });
+};
